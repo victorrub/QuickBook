@@ -1,5 +1,7 @@
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,9 +20,15 @@ namespace QuickBook
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHealthChecks();
+            // Database Connection
+            services.AddDbContext<QuickBookDbContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("QuickBookDb")));
 
+            // Controllers
+            services.AddHealthChecks();
             services.AddControllers();
+
+            // Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "QuickBook", Version = "v1" });
